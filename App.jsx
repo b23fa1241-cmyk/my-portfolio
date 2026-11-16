@@ -1,11 +1,12 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { me, knowledge, hobbies, projects, dreams } from './data'
 
+// cx: төвийн x (%), y: дээд ирмэг (%), ly: гэрлийн замын y (%)
 const ISLANDS = [
-  { id: 'knowledge', en: 'Knowledge Island', mn: 'Сурсан мэдлэг', c: '#4aa3ff', cx: 25, y: '2%', ly: 21, p: 10, t: '7s' },
-  { id: 'creativity', en: 'Creativity Island', mn: 'Бүтээлч байдал', c: '#ff6fae', cx: 75, y: '0%', ly: 19, p: 18, t: '5s' },
-  { id: 'project', en: 'Project Island', mn: 'Хийсэн төслүүд', c: '#7ddc8a', cx: 25, y: '52%', ly: 71, p: 26, t: '8s' },
-  { id: 'future', en: 'Future Island', mn: 'Ирээдүйн мөрөөдөл', c: '#ffd166', cx: 75, y: '50%', ly: 69, p: 14, t: '9s' },
+  { id: 'knowledge', nav: 'Миний тухай', en: 'Knowledge Island', mn: 'Сурсан мэдлэг', c: '#4aa3ff', cx: 17, y: '6%', ly: 23, p: 10, t: '7s' },
+  { id: 'creativity', nav: 'Бүтээлч байдал', en: 'Creativity Island', mn: 'Бүтээлч байдал', c: '#ff6fae', cx: 80, y: '2%', ly: 19, p: 18, t: '5s' },
+  { id: 'project', nav: 'Бүтээлүүд', en: 'Project Island', mn: 'Хийсэн төслүүд', c: '#7ddc8a', cx: 30, y: '54%', ly: 71, p: 26, t: '8s' },
+  { id: 'future', nav: 'Холбоо барих', en: 'Future Island', mn: 'Ирээдүйн мөрөөдөл', c: '#ffd166', cx: 78, y: '52%', ly: 69, p: 14, t: '9s' },
 ]
 
 function Deco({ id }) {
@@ -45,6 +46,7 @@ function Panel({ id, onSecret }) {
     <p>Би: {hobbies.join(', ')}. Доорх талбар дээр дарж өнгө цац.</p>
     <div className="paint" onClick={paint} role="img" aria-label="Зурах талбар">
       {dots.map((d, i) => <i key={i} style={{ left: d.x, top: d.y, background: `hsl(${d.h} 90% 65%)` }} />)}
+      {!dots.length && <em className="ph">Энд дарж өнгө цацаарай ✦</em>}
     </div></>)
   if (id === 'project') return (
     <div className="grid">{projects.map((p) => (
@@ -62,23 +64,33 @@ function Panel({ id, onSecret }) {
       {me.links.map((l) => <span key={l.n}> · <a href={l.u} target="_blank" rel="noreferrer">{l.n}</a></span>)}</p></>)
 }
 
+function IslandSvg({ id }) {
+  return (
+    <svg viewBox="0 0 200 170" aria-hidden="true">
+      <path d="M8 72 Q100 44 192 72 Q172 122 100 164 Q28 122 8 72Z" fill="#2b2250" />
+      <ellipse cx="100" cy="70" rx="92" ry="26" fill="var(--c)" />
+      <Deco id={id} />
+    </svg>
+  )
+}
+
 export default function App() {
-  const [active, setActive] = useState(null)
   const [fly, setFly] = useState(null)
   const [meteors, setMeteors] = useState(false)
   const wref = useRef(null)
   const raf = useRef(0)
-  const cur = ISLANDS.find((i) => i.id === active)
   const target = ISLANDS.find((i) => i.id === fly)
-  useEffect(() => {
-    const k = (e) => e.key === 'Escape' && close()
-    window.addEventListener('keydown', k)
-    return () => window.removeEventListener('keydown', k)
-  }, [])
-  const close = () => { setActive(null); setFly(null) }
-  const pick = (id) => { if (fly) return; setFly(id); setTimeout(() => setActive(id), 700) }
+
+  // Арал руу «нисээд», дараа нь харгалзах хэсэг рүү гүйлгэнэ
+  const pick = (id) => {
+    if (fly) return
+    setFly(id)
+    setTimeout(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+      setTimeout(() => setFly(null), 700)
+    }, 650)
+  }
   const secret = () => { setMeteors(true); setTimeout(() => setMeteors(false), 4500) }
-  // React-ийг дахин зурахгүйгээр CSS хувьсагчийг шууд өөрчилнө (frame бүрт нэг л удаа)
   const move = (e) => {
     if (raf.current) return
     const { clientX, clientY } = e
@@ -92,39 +104,56 @@ export default function App() {
   }
 
   return (
-    <main className="app" onMouseMove={move}>
-      <header className="hero">
-        <p className="hello">Миний дотоод ертөнц</p>
-        <h1>{me.name}</h1>
-        <p className="role">{me.role}</p>
-        <p className="line">{me.line}</p>
-      </header>
+    <>
+      <nav className="nav">
+        <a className="brand" href="#home">{me.name}</a>
+        <div>{ISLANDS.map((i) => <a key={i.id} href={`#${i.id}`}>{i.nav}</a>)}</div>
+      </nav>
 
-      <div className="stage">
-        <div className={'world' + (fly ? ' has-fly' : '')}
-          ref={wref} style={{ transformOrigin: target ? `${target.cx}% ${target.ly}%` : '50% 50%' }}>
-          <svg className="lanes" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-            {ISLANDS.map((a, i) => {
-              const b = ISLANDS[[1, 3, 0, 2][i]] // Knowledge→Creativity→Future→Project→Knowledge
-              const d = `M${a.cx} ${a.ly} Q${(a.cx + b.cx) / 2} ${(a.ly + b.ly) / 2 + (i % 2 ? 9 : -9)} ${b.cx} ${b.ly}`
-              return (<g key={a.id} stroke={a.c} fill="none" vectorEffect="non-scaling-stroke">
-                <path d={d} className="lane" vectorEffect="non-scaling-stroke" />
-                <path d={d} pathLength="100" className="pulse" vectorEffect="non-scaling-stroke" style={{ animationDelay: `${i * 1.1}s` }} /></g>)
-            })}
-          </svg>
-          {ISLANDS.map((i) => (
-            <button key={i.id} className={'isl' + (fly === i.id ? ' on' : '')} onClick={() => pick(i.id)}
-              style={{ '--c': i.c, '--cx': i.cx, '--y': i.y, '--p': i.p, '--t': i.t }} aria-label={`${i.en}: ${i.mn}`}>
-              <svg viewBox="0 0 200 170" aria-hidden="true">
-                <path d="M8 72 Q100 44 192 72 Q172 122 100 164 Q28 122 8 72Z" fill="#2b2250" />
-                <ellipse cx="100" cy="70" rx="92" ry="26" fill="var(--c)" />
-                <Deco id={i.id} />
-              </svg>
-              <b>{i.en}</b><span>{i.mn}</span>
-            </button>
-          ))}
-        </div>
-      </div>
+      <main onMouseMove={move}>
+        <section id="home" className="home">
+          <div ref={wref} className={'world' + (fly ? ' has-fly' : '')}
+            style={{ transformOrigin: target ? `${target.cx}% ${target.ly}%` : '50% 50%' }}>
+            <svg className="lanes" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+              {ISLANDS.map((a, i) => {
+                const b = ISLANDS[[1, 3, 0, 2][i]] // Knowledge→Creativity→Future→Project→Knowledge
+                const d = `M${a.cx} ${a.ly} Q${(a.cx + b.cx) / 2} ${(a.ly + b.ly) / 2 + (i % 2 ? 9 : -9)} ${b.cx} ${b.ly}`
+                return (<g key={a.id} stroke={a.c} fill="none">
+                  <path d={d} className="lane" vectorEffect="non-scaling-stroke" />
+                  <path d={d} pathLength="100" className="pulse" vectorEffect="non-scaling-stroke" style={{ animationDelay: `${i * 1.1}s` }} /></g>)
+              })}
+            </svg>
+
+            <header className="hero">
+              <p className="hello">Миний дотоод ертөнц</p>
+              <h1>{me.name}</h1>
+              <p className="role">{me.role}</p>
+              <p className="line">{me.line}</p>
+            </header>
+
+            {ISLANDS.map((i) => (
+              <button key={i.id} className={'isl' + (fly === i.id ? ' on' : '')} onClick={() => pick(i.id)}
+                style={{ '--c': i.c, '--cx': i.cx, '--y': i.y, '--p': i.p, '--t': i.t }} aria-label={`${i.en}: ${i.mn}`}>
+                <IslandSvg id={i.id} />
+                <b>{i.en}</b><span>{i.mn}</span>
+              </button>
+            ))}
+            <p className="scrollhint">Арал дээр дарж нис, эсвэл доош гүйлгэ ↓</p>
+          </div>
+        </section>
+
+        {ISLANDS.map((i) => (
+          <section key={i.id} id={i.id} className="sec" style={{ '--c': i.c }}>
+            <div className="inner">
+              <header className="sh">
+                <IslandSvg id={i.id} />
+                <div><h2>{i.nav}</h2><p>{i.en} · {i.mn}</p></div>
+              </header>
+              <Panel id={i.id} onSecret={secret} />
+            </div>
+          </section>
+        ))}
+      </main>
 
       {meteors && (
         <div className="rain" aria-live="polite">
@@ -132,17 +161,7 @@ export default function App() {
           <p>Ирээдүй чинь одоо эхэлж байна 🚀</p>
         </div>
       )}
-
-      {cur && (
-        <div className="veil" onClick={() => close()}>
-          <section className="panel" style={{ '--c': cur.c }} onClick={(e) => e.stopPropagation()} role="dialog" aria-label={cur.en}>
-            <button className="x" autoFocus onClick={close} aria-label="Хаах">×</button>
-            <h2>{cur.mn}</h2>
-            <Panel id={cur.id} onSecret={secret} />
-          </section>
-        </div>
-      )}
-      <footer>© {new Date().getFullYear()} {me.name}</footer>
-    </main>
+      <footer>© {new Date().getFullYear()} {me.name} · React-ээр өөрөө бичсэн</footer>
+    </>
   )
 }
