@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
-import { me, knowledge, hobbies, projects, dreams } from './data'
+import { me, about, works, skills } from './data'
 
 // cx: төвийн x (%), y: дээд ирмэг (%), ly: гэрлийн замын y (%)
 const ISLANDS = [
-  { id: 'knowledge', nav: 'Миний тухай', en: 'Knowledge Island', mn: 'Сурсан мэдлэг', c: '#4aa3ff', cx: 10, y: '2%', ly: 19, s: 1.1, p: 10, t: '7s' },
-  { id: 'creativity', nav: 'Бүтээлч байдал', en: 'Creativity Island', mn: 'Бүтээлч байдал', c: '#ff6fae', cx: 90, y: '6%', ly: 20, s: 0.9, p: 18, t: '5s' },
-  { id: 'project', nav: 'Бүтээлүүд', en: 'Project Island', mn: 'Хийсэн төслүүд', c: '#7ddc8a', cx: 24, y: '54%', ly: 68, s: 0.95, p: 26, t: '8s' },
-  { id: 'future', nav: 'Холбоо барих', en: 'Future Island', mn: 'Ирээдүйн мөрөөдөл', c: '#ffd166', cx: 70, y: '54%', ly: 71, s: 1.1, p: 14, t: '9s' },
+  { id: 'about', world: 'Миний ертөнц', nav: 'Миний тухай', c: '#4aa3ff', cx: 10, y: '2%', ly: 19, s: 1.1, p: 10, t: '7s' },
+  { id: 'works', world: 'Бүтээлийн ертөнц', nav: 'Бүтээлүүд', c: '#7ddc8a', cx: 90, y: '6%', ly: 20, s: 0.9, p: 18, t: '5s' },
+  { id: 'skills', world: 'Ур чадварын ертөнц', nav: 'Ур чадвар', c: '#ff6fae', cx: 70, y: '54%', ly: 71, s: 1.1, p: 26, t: '8s' },
+  { id: 'contact', world: 'Харилцаа холбооны ертөнц', nav: 'Холбоо барих', c: '#ffd166', cx: 24, y: '54%', ly: 68, s: 0.95, p: 14, t: '9s' },
 ]
 
 function Deco({ id }) {
-  if (id === 'knowledge') return (
+  if (id === 'about') return (
     <g>
       {[0, 1, 2].map((i) => <rect key={i} x={78 + i * 14} y={28 - i * 6} width="12" height={36 + i * 6} fill={['#fff', '#cfe6ff', '#9ccaff'][i]} />)}
       {[0, 120, 240].map((a, i) => (
@@ -18,10 +18,10 @@ function Deco({ id }) {
           <circle cx="100" cy={8 + i * 6} r="4" fill="#fff" /></g>
       ))}
     </g>)
-  if (id === 'creativity') return (
+  if (id === 'skills') return (
     <g>{[[70, 52, 14, '#ffd166'], [105, 44, 18, '#8ad7ff'], [136, 54, 12, '#fff']].map(([x, y, r, f], i) => (
       <circle key={i} className="blob" style={{ animationDelay: `${i * 0.4}s` }} cx={x} cy={y} r={r} fill={f} />))}</g>)
-  if (id === 'project') return (
+  if (id === 'works') return (
     <g>{[60, 96, 130].map((x, i) => (
       <g key={x}><rect x={x} y={38 + i * 3} width="26" height={24 - i * 3} fill="#fff" />
         <path d={`M${x - 3} ${38 + i * 3} L${x + 13} ${24 + i * 3} L${x + 29} ${38 + i * 3}Z`} fill="#1d6b3a" />
@@ -32,36 +32,55 @@ function Deco({ id }) {
         <circle key={i} className="tw" style={{ animationDelay: `${i * 0.5}s` }} cx={x} cy={y} r="3" fill="#fff" />))}</g>)
 }
 
+function Work({ w }) {
+  const [k, setK] = useState(0)
+  const has = w.imgs.length > 0
+  const shots = has ? w.imgs : [0, 1, 2]
+  const bg = (n) => ({ background: `linear-gradient(135deg,hsl(${w.hue + n * 35} 60% 42%),hsl(${w.hue + n * 35 + 40} 70% 20%))` })
+  return (
+    <article className="wk">
+      <div className="main" style={has ? undefined : bg(k)}>
+        {has ? <img src={w.imgs[k]} alt={`${w.t} — зураг ${k + 1}`} /> : <span>{w.t[0]}</span>}
+      </div>
+      <div className="thumbs">
+        {shots.map((sh, n) => (
+          <button key={n} className={n === k ? 'on' : ''} onClick={() => setK(n)} aria-label={`Зураг ${n + 1}`} style={has ? undefined : bg(n)}>
+            {has && <img src={sh} alt="" />}
+          </button>
+        ))}
+      </div>
+      <h3>{w.t}</h3><p>{w.d}</p><small>{w.tags.join(' · ')}</small>
+      <a className="go" href={w.url} target="_blank" rel="noreferrer">Үзэх →</a>
+    </article>
+  )
+}
+
 function Panel({ id, onSecret }) {
-  const [dots, setDots] = useState([])
   const [taps, setTaps] = useState(0)
-  const paint = (e) => {
-    const r = e.currentTarget.getBoundingClientRect()
-    setDots((d) => [...d.slice(-60), { x: e.clientX - r.left, y: e.clientY - r.top, h: Math.floor(Math.random() * 360) }])
-  }
-  if (id === 'knowledge') return (<>
-    <p>{knowledge.bio}</p>
-    <ul className="chips">{knowledge.skills.map((s) => <li key={s}>{s}</li>)}</ul></>)
-  if (id === 'creativity') return (<>
-    <p>Би: {hobbies.join(', ')}. Доорх талбар дээр дарж өнгө цац.</p>
-    <div className="paint" onClick={paint} role="img" aria-label="Зурах талбар">
-      {dots.map((d, i) => <i key={i} style={{ left: d.x, top: d.y, background: `hsl(${d.h} 90% 65%)` }} />)}
-      {!dots.length && <em className="ph">Энд дарж өнгө цацаарай ✦</em>}
-    </div></>)
-  if (id === 'project') return (
-    <div className="grid">{projects.map((p) => (
-      <a className="card" key={p.t} href={p.url} target="_blank" rel="noreferrer">
-        <div className="shot" style={{ background: `linear-gradient(135deg,hsl(${p.hue} 60% 40%),hsl(${p.hue + 40} 70% 20%))` }}>{p.t[0]}</div>
-        <h3>{p.t}</h3><p>{p.d}</p><small>{p.tags.join(' · ')}</small>
-      </a>))}</div>)
   const star = () => { const n = taps + 1; setTaps(n); if (n === 3) { onSecret(); setTaps(0) } }
+  if (id === 'about') return (<>
+    <h4 className="k">Нэр</h4>
+    <p className="big">{me.name}</p><p>{me.role}</p>
+    <h4 className="k">Боловсрол</h4>
+    {about.edu.map((e) => (
+      <div className="edu" key={e.school}><b>{e.school}</b><br />{e.major} · <small>{e.years}</small></div>))}
+    <h4 className="k">Сонирхол</h4>
+    <ul className="chips">{about.interests.map((x) => <li key={x}>{x}</li>)}</ul></>)
+  if (id === 'works') return <div className="grid">{works.map((w) => <Work key={w.t} w={w} />)}</div>
+  if (id === 'skills') return (
+    <div className="sk">{skills.map((g) => (
+      <div key={g.t}><h4 className="k">{g.t}</h4>
+        <ul className="chips">{g.items.map((x) => <li key={x}>{x}</li>)}</ul></div>))}</div>)
+  const rows = [
+    ['✉', 'Имэйл', me.email, `mailto:${me.email}`],
+    ['</>', 'GitHub', me.github.replace('https://', ''), me.github],
+    ['in', 'LinkedIn', me.linkedin.replace('https://', ''), me.linkedin],
+  ]
   return (<>
     <button className="secret" onClick={star} aria-label="Нууц од">✦</button>
-    <ul>{dreams.map((d) => <li key={d}>{d}</li>)}</ul>
-    <h3>Дохио илгээх</h3>
-    <p><a href={`mailto:${me.email}`}>{me.email}</a></p>
-    <p><a href={me.github} target="_blank" rel="noreferrer">GitHub</a>
-      {me.links.map((l) => <span key={l.n}> · <a href={l.u} target="_blank" rel="noreferrer">{l.n}</a></span>)}</p></>)
+    <div className="cl">{rows.map(([ic, n, v, u]) => (
+      <a key={n} className="clink" href={u} target="_blank" rel="noreferrer">
+        <span>{ic}</span><b>{n}</b><em>{v}</em></a>))}</div></>)
 }
 
 function IslandSvg({ id }) {
@@ -144,7 +163,7 @@ export default function App() {
         <div ref={wref} className={'world' + (fly ? ' has-fly' : '')} style={{ transform: cam }}>
           <svg className="lanes" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
             {ISLANDS.map((a, i) => {
-              const b = ISLANDS[[1, 3, 0, 2][i]]
+              const b = ISLANDS[(i + 1) % 4]
               const d = `M${a.cx} ${a.ly} Q${(a.cx + b.cx) / 2} ${(a.ly + b.ly) / 2 + (i % 2 ? 9 : -9)} ${b.cx} ${b.ly}`
               return (<g key={a.id} stroke={a.c} fill="none">
                 <path d={d} className="lane" vectorEffect="non-scaling-stroke" />
@@ -153,17 +172,17 @@ export default function App() {
           </svg>
 
           <header className="hero">
-            <p className="hello">Миний дотоод ертөнц</p>
             <h1>{me.name}</h1>
+            <div className="rule" aria-hidden="true"><i />✦<i /></div>
             <p className="role">{me.role}</p>
             <p className="line">{me.line}</p>
           </header>
 
           {ISLANDS.map((i) => (
             <button key={i.id} className={'isl' + (fly === i.id ? ' on' : '')} onClick={() => open(i.id)}
-              style={{ '--c': i.c, '--cx': i.cx, '--y': i.y, '--s': i.s, '--p': i.p, '--t': i.t }} aria-label={`${i.en}: ${i.mn}`}>
+              style={{ '--c': i.c, '--cx': i.cx, '--y': i.y, '--s': i.s, '--p': i.p, '--t': i.t }} aria-label={i.world}>
               <IslandSvg id={i.id} />
-              <b>{i.en}</b><span>{i.mn}</span>
+              <b>{i.world}</b><span>{i.nav}</span>
             </button>
           ))}
           <p className="scrollhint">Арал дээр дарж нис ✦</p>
@@ -171,11 +190,11 @@ export default function App() {
 
         {cur && (
           <div className="veil" onClick={close}>
-            <section key={cur.id} className="panel" style={{ '--c': cur.c }} role="dialog" aria-label={cur.en} onClick={(e) => e.stopPropagation()}>
+            <section key={cur.id} className="panel" style={{ '--c': cur.c }} role="dialog" aria-label={cur.world} onClick={(e) => e.stopPropagation()}>
               <button className="x" onClick={close} aria-label="Хаах">×</button>
               <div className="pbody">
               <header className="ph-head">
-                <div><h2>{cur.nav}</h2><p>{cur.en} · {cur.mn}</p></div>
+                <div><h2>{cur.world}</h2><p>{cur.nav}</p></div>
               </header>
               <Panel id={cur.id} onSecret={secret} />
               </div>
