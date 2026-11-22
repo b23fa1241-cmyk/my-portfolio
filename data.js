@@ -16,7 +16,7 @@ export const about = {
       years: '2023 – 2027'
     },
   ],
-  interests: ['Шинэ зүйл турших', 'Кино', 'Аялал', 'Хөгжим', 'Зураг зурах'],
+  interests: ['Шинэ зүйл турших', 'Кино', 'Аялал', 'Хөгжим', 'Зураг'],
 }
 
 // 2. Бүтээлийн ертөнц
@@ -31,7 +31,7 @@ export const works = [
   },
   {
     t: 'ISM Digital Museum',
-    d: 'Тэнхимийн түүх, багш нар, үйл ажиллагаа болон оюутны бүтээлийг нэгтгэсэн дижитал архивын вебсайт хөгжүүлсэн.',
+    d: 'Тэнхимийн түүх, багш нар, үйл ажиллагаа болон оюутны бүтээлийг нэгтгэсэн дижитал вебсайт хөгжүүлсэн.',
     tags: ['React', 'JavaScript', 'Supabase', 'Web Development'],
     url: 'https://ism-museum-nine.vercel.app',
     hue: 25,
@@ -39,7 +39,7 @@ export const works = [
   },
   {
     t: 'Amazon Dashboard',
-    d: 'Өгөгдлийн сан, Data Warehouse, Data Mart зохион байгуулж, ETL процессоор өгөгдөл боловсруулсан. Power BI ашиглан борлуулалтын интерактив dashboard бүтээсэн.',
+    d: 'Өгөгдлийн сан, Data Warehouse, Data Mart байгуулж, ETL-ээр өгөгдөл боловсруулан интерактив dashboard бүтээсэн.',
     tags: ['SQL', 'Data Warehouse', 'Data Mart', 'ETL', 'Power BI'],
     url: 'https://tinyurl.com/ruyzu38f',
     hue: 140,
