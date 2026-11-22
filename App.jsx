@@ -32,41 +32,79 @@ function Deco({ id }) {
         <circle key={i} className="tw" style={{ animationDelay: `${i * 0.5}s` }} cx={x} cy={y} r="3" fill="#fff" />))}</g>)
 }
 
-function Work({ w }) {
-  const [k, setK] = useState(0)
-  const has = w.imgs.length > 0
-  const shots = has ? w.imgs : [0, 1, 2]
+function Works() {
+  const [i, setI] = useState(0) // аль төсөл
+  const [k, setK] = useState(0) // аль зураг
+  const [zoom, setZoom] = useState(false)
+  const w = works[i]
+  const imgs = w.imgs.slice(0, 5) // дээд тал нь 5 зураг
+  const has = imgs.length > 0
+  const shots = has ? imgs : [0, 1, 2, 3, 4]
   const bg = (n) => ({ background: `linear-gradient(135deg,hsl(${w.hue + n * 35} 60% 42%),hsl(${w.hue + n * 35 + 40} 70% 20%))` })
-  return (
-    <article className="wk">
-      <div className="main" style={has ? undefined : bg(k)}>
-        {has ? <img src={w.imgs[k]} alt={`${w.t} — зураг ${k + 1}`} /> : <span>{w.t[0]}</span>}
+  const pick = (n) => { setI(n); setK(0) }
+
+  // Томруулсан үед Esc зөвхөн томруулалтыг хаана, ←/→ зураг солино
+  useEffect(() => {
+    if (!zoom) return
+    const key = (e) => {
+      if (!['Escape', 'ArrowLeft', 'ArrowRight'].includes(e.key)) return
+      e.stopPropagation()
+      if (e.key === 'Escape') setZoom(false)
+      else setK((v) => (v + (e.key === 'ArrowRight' ? 1 : shots.length - 1)) % shots.length)
+    }
+    addEventListener('keydown', key, true)
+    return () => removeEventListener('keydown', key, true)
+  }, [zoom, shots.length])
+
+  return (<>
+    <div className="wsel">
+      {works.map((x, n) => <button key={x.t} className={n === i ? 'on' : ''} onClick={() => pick(n)} title={x.t}>{x.t}</button>)}
+    </div>
+    <div className="wv">
+      <div>
+        <div className={'main' + (has ? '' : ' ph')} style={has ? undefined : bg(k)} onClick={() => has && setZoom(true)}>
+          {has ? <img src={imgs[k]} alt={`${w.t} — зураг ${k + 1}`} /> : <span>{w.t[0]}</span>}
+          <em className="zh">{k + 1} / {shots.length}</em>
+        </div>
+        <div className="thumbs">
+          {shots.map((sh, n) => (
+            <button key={n} className={n === k ? 'on' : ''} onClick={() => setK(n)} aria-label={`Зураг ${n + 1}`} style={has ? undefined : bg(n)}>
+              {has && <img src={sh} alt="" />}
+            </button>
+          ))}
+        </div>
       </div>
-      <div className="thumbs">
-        {shots.map((sh, n) => (
-          <button key={n} className={n === k ? 'on' : ''} onClick={() => setK(n)} aria-label={`Зураг ${n + 1}`} style={has ? undefined : bg(n)}>
-            {has && <img src={sh} alt="" />}
-          </button>
-        ))}
+      <div className="info">
+        <h3>{w.t}</h3>
+        <p>{w.d}</p>
+        <ul className="chips">{w.tags.map((t) => <li key={t}>{t}</li>)}</ul>
+        {w.url && w.url !== '#' && (<>
+          <h4 className="k">Холбоос</h4>
+          <a className="ulink" href={w.url} target="_blank" rel="noreferrer">{w.url.replace(/^https?:\/\//, '')}</a>
+        </>)}
       </div>
-      <h3>{w.t}</h3><p>{w.d}</p><small>{w.tags.join(' · ')}</small>
-      <a className="go" href={w.url} target="_blank" rel="noreferrer">Үзэх →</a>
-    </article>
-  )
+    </div>
+    {zoom && has && (
+      <div className="lb" onClick={() => setZoom(false)}>
+        <img src={imgs[k]} alt={`${w.t} — зураг ${k + 1}`} onClick={(e) => { e.stopPropagation(); setK((k + 1) % shots.length) }} />
+      </div>
+    )}
+  </>)
 }
 
 function Panel({ id, onSecret }) {
   const [taps, setTaps] = useState(0)
   const star = () => { const n = taps + 1; setTaps(n); if (n === 3) { onSecret(); setTaps(0) } }
-  if (id === 'about') return (<>
-    <h4 className="k">Нэр</h4>
-    <p className="big">{me.name}</p><p>{me.role}</p>
-    <h4 className="k">Боловсрол</h4>
-    {about.edu.map((e) => (
-      <div className="edu" key={e.school}><b>{e.school}</b><br />{e.major} · <small>{e.years}</small></div>))}
-    <h4 className="k">Сонирхол</h4>
-    <ul className="chips">{about.interests.map((x) => <li key={x}>{x}</li>)}</ul></>)
-  if (id === 'works') return <div className="grid">{works.map((w) => <Work key={w.t} w={w} />)}</div>
+  if (id === 'about') return (
+    <div className="ab">
+      <div><h4 className="k">Нэр</h4><p className="big">{me.name}</p></div>
+      <div><h4 className="k">Боловсрол</h4>
+        {about.edu.map((e) => (
+          <p className="edu" key={e.school}><b>{e.school}</b><br />{e.major} · {e.years}</p>))}</div>
+      <div><h4 className="k">Сонирхол</h4>
+        <ul className="chips">{about.interests.map((x) => <li key={x}>{x}</li>)}</ul></div>
+    </div>)
+  if (id === 'works') return <Works />
   if (id === 'skills') return (
     <div className="sk">{skills.map((g) => (
       <div key={g.t}><h4 className="k">{g.t}</h4>
@@ -94,7 +132,7 @@ function IslandSvg({ id }) {
 }
 
 const fromHash = () => ISLANDS.find((i) => '#' + i.id === location.hash)?.id || null
-const ZOOM = 1.8
+const ZOOM = 1.35
 
 export default function App() {
   const [fly, setFly] = useState(fromHash)       // камер аль арал руу ойртсон бэ
@@ -145,7 +183,7 @@ export default function App() {
     })
   }
   // Сонгосон арлыг дэлгэцийн дээд хэсгийн голд аваачна
-  const cam = target ? `translate(${-ZOOM * (target.cx - 50)}%, ${-20 - ZOOM * (target.ly - 50)}%) scale(${ZOOM})` : 'none'
+  const cam = target ? `translate(${-ZOOM * (target.cx - 50)}%, ${-28 - ZOOM * (target.ly - 50)}%) scale(${ZOOM})` : 'none'
 
   return (
     <>
@@ -190,11 +228,11 @@ export default function App() {
 
         {cur && (
           <div className="veil" onClick={close}>
-            <section key={cur.id} className="panel" style={{ '--c': cur.c }} role="dialog" aria-label={cur.world} onClick={(e) => e.stopPropagation()}>
+            <section key={cur.id} className={'panel' + (cur.id === 'works' ? ' wide' : '')} style={{ '--c': cur.c }} role="dialog" aria-label={cur.world} onClick={(e) => e.stopPropagation()}>
               <button className="x" onClick={close} aria-label="Хаах">×</button>
               <div className="pbody">
               <header className="ph-head">
-                <div><h2>{cur.world}</h2><p>{cur.nav}</p></div>
+                <h2>{cur.world}</h2>
               </header>
               <Panel id={cur.id} onSecret={secret} />
               </div>

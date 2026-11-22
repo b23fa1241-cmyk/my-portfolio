@@ -98,3 +98,30 @@ h1{font-size:clamp(2rem,4.6vw,4.4rem);line-height:1.05;margin:0;background:linea
 .clink:hover,.clink:focus-visible{background:color-mix(in srgb,var(--c) 18%,transparent);outline:none}
 .clink span{font:700 1.2rem monospace;color:var(--c);text-align:center}.clink em{opacity:.75;font-style:normal;overflow-wrap:anywhere}
 @media (max-width:700px){.clink{grid-template-columns:36px 1fr}.clink em{grid-column:2}}
+.wk .main{cursor:pointer}.thumbs button{min-width:0}
+
+.panel.wide{width:min(1120px,96vw)}
+.panel.wide .pbody{max-height:74vh}
+.wsel{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:16px}
+.wsel button{background:none;border:1px solid color-mix(in srgb,var(--c) 55%,transparent);color:var(--ink);border-radius:999px;padding:6px 16px;cursor:pointer;font-size:.88rem;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wsel button:hover,.wsel button:focus-visible{background:color-mix(in srgb,var(--c) 22%,transparent);outline:none}
+.wsel button.on{background:var(--c);color:#0b0d2b;font-weight:700}
+.wv{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:24px;align-items:start}
+.wv .main{position:relative;aspect-ratio:16/10;height:auto;border-radius:14px;overflow:hidden;background:#05061a;border:1px solid #ffffff22;display:grid;place-items:center;cursor:zoom-in;font:700 3rem Georgia,serif;color:#fff8}
+.wv .main img{width:100%;height:100%;object-fit:contain;display:block}
+.wv .zh{position:absolute;right:10px;bottom:10px;background:#0b0d2bcc;color:var(--ink);border-radius:999px;padding:2px 12px;font:normal .75rem system-ui,sans-serif}
+.wv .thumbs{margin-top:10px}.wv .thumbs button{height:56px}
+.wv .info h3{font-size:clamp(1.3rem,2.2vw,1.8rem);margin:0 0 10px}.wv .info p{line-height:1.7}
+.btn{display:inline-block;margin-top:14px;padding:9px 22px;border-radius:999px;background:var(--c);color:#0b0d2b!important;text-decoration:none;font-weight:700}
+.btn:hover,.btn:focus-visible{filter:brightness(1.15);outline:none}
+.lb{position:fixed;inset:0;z-index:40;background:#02030ff2;display:grid;place-items:center;padding:20px;cursor:zoom-out;animation:fade .2s}
+.lb img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;cursor:pointer}
+@media (max-width:800px){.wv{grid-template-columns:1fr}.panel.wide{width:100%}}
+
+.wv .main{aspect-ratio:auto;display:block;line-height:0}
+.wv .main.ph{aspect-ratio:16/10;display:grid;line-height:1}
+.wv .main img{height:auto;max-height:58vh;margin:0 auto}
+.thumbs img{width:100%;height:100%;object-fit:cover;display:block}
+.thumbs button{opacity:.85}.thumbs button:hover{opacity:1}
+.ulink{text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere;font-weight:400!important}
+.wv .info .k{margin-top:18px}
