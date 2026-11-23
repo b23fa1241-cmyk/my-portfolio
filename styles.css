@@ -426,20 +426,27 @@ html{scroll-behavior:smooth}
 
 /* ===== Утасны засвар (сүүлд бичсэн тул дээрх дүрмүүдийг дарна) ===== */
 @media (max-width:700px){
- /* Цэс: 2x2 тэгш торонд, нэг мөрөнд багтана */
- .nav{padding:8px}
- .nav .links{display:grid;grid-template-columns:1fr 1fr;gap:4px;width:100%}
- .nav .links a{justify-content:center;gap:6px;padding:8px 6px;font-size:.78rem;white-space:nowrap}
+ /* Цэс: нэг мөр, хуруугаар хажуу тийш гүйлгэнэ. Идэвхтэй товч автоматаар голд ирнэ */
+ .nav{height:52px;padding:6px 8px;flex-wrap:nowrap;justify-content:flex-start;border-radius:18px}
+ .nav .links{display:flex;flex-wrap:nowrap;justify-content:flex-start;gap:4px;width:100%;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;scroll-snap-type:x proximity}
+ .nav .links::-webkit-scrollbar{display:none}
+ .nav .links a{flex:none;scroll-snap-align:center;gap:6px;padding:8px 14px;font-size:.82rem;white-space:nowrap}
  .nav .links a .ico{width:15px;height:15px}
+ /* Зүүн дээд од (нүүр рүү буцах) утсан дээр ч харагдана */
+ .nav{gap:8px}
+ .brand{display:inline-flex;flex:none;align-items:center}
+ .nav .logo{width:36px;height:36px}
+ .nav .links{min-width:0;flex:1;width:auto}
+ .band{scroll-margin-top:72px}
  /* Нүүр хэсэг: дэлгэцийн өргөнөөс хэтрэхгүй, цэсний доороос эхэлнэ */
- .home{padding-top:124px;overflow-x:clip}
+ .home{padding-top:84px;overflow-x:clip}
  .site{overflow-x:clip}
  .world{width:100%;padding:16px 14px 28px;gap:26px 14px;align-items:start}
  /* Гарчигтай давхцдаг сарыг нууж, гаригийг жижигрүүлнэ */
  .moon{display:none}
- .planet{width:90px;top:110px;right:-24px;opacity:.6}
+ .planet{width:90px;top:80px;right:-24px;opacity:.6}
  .hero{padding:0 4px}
- /* ШАЛТГААН: hero-ийн гэрэл (::before) хоёр талдаа 25%-иар хэтэрч хуудсыг өргөсгөдөг байсан */
+ /* hero-ийн гэрэл (::before) хоёр талдаа хэтэрч хуудсыг өргөсгөдөг байсан */
  .hero::before{inset:-20% 0}
  .hero h1{font-size:clamp(1.8rem,9vw,2.4rem)}
  .eyebrow{letter-spacing:.22em;font-size:.65rem}
@@ -449,11 +456,25 @@ html{scroll-behavior:smooth}
  /* Арлын нэрийн шошго: icon-гүй, 2 мөрөнд багтана */
  .isl b.pill{margin-top:8px;padding:6px 10px;font-size:.8rem;line-height:1.25;text-align:center;justify-content:center}
  .isl .pill .ico{display:none}
- /* Арлын цонх: өндөр болсон цэсний доор нээгдэнэ */
- .veil{inset:108px 0 0}
- .pbody{max-height:calc(100dvh - 150px)}
+
+ /* ===== Арлын цонх ===== */
+ /* Цэсний доор, дэлгэцийн үлдсэн хэсгийг дүүргэж нээгдэнэ. Дотор нь л гүйлгэгдэнэ */
+ .veil{inset:68px 0 0;padding:12px;align-items:center;background:#05061ae6}
+ .panel{display:flex;flex-direction:column;max-width:100%;max-height:100%;border-radius:24px}
+ .pbody{flex:1;min-height:0;max-height:none;padding:52px 16px 20px;overflow-y:auto;overscroll-behavior:contain}
+ .ph-head{padding:0 30px;margin-bottom:16px}
+ .ph-head h2{font-size:1.45rem}
+ .x{top:12px;right:12px}
  /* Цонхны доторх зураг, текст хүрээнээсээ хэтрэхгүй */
- .panel{max-width:100%}
  .wv>div,.wv .info{min-width:0}
  .wv .main img{max-width:100%}
+ /* Бүтээл сонгогч: нэг мөр, хажуу тийш гүйлгэнэ */
+ .wsel{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;scrollbar-width:none;margin:0 -4px 14px;padding:0 4px 4px}
+ .wsel::-webkit-scrollbar{display:none}
+ .wsel button{flex:none}
+ /* Холбоо барих мөр: зүүнд icon, баруунд нэр ба утга */
+ .clink{grid-template-columns:48px 1fr;grid-template-rows:auto auto;column-gap:14px;row-gap:2px;padding:12px 14px;align-items:center;justify-items:start;text-align:left}
+ .clink span{grid-row:1 / span 2;width:44px;height:44px;font-size:1rem}
+ .clink b{grid-column:2;align-self:end}
+ .clink em{grid-column:2;grid-row:2;align-self:start;font-size:.88rem;overflow-wrap:anywhere}
 }
