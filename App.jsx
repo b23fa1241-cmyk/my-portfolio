@@ -90,14 +90,11 @@ function Works({ start = 0 }) {
       <div>
         <div className={'main' + (has ? '' : ' ph')} style={{ ...(has ? {} : bg(k)), '--r': ratio }} onClick={() => has && setZoom(true)}>
           {has ? <img src={imgs[k]} alt={`${w.t} — зураг ${k + 1}`} onLoad={(e) => setRatio(Math.min(3, Math.max(0.6, e.target.naturalWidth / e.target.naturalHeight)))} /> : <span>{w.t[0]}</span>}
+          {shots.length > 1 && (<>
+            <button className="carr prev" onClick={(e) => { e.stopPropagation(); setK((k + shots.length - 1) % shots.length) }} aria-label="Өмнөх зураг">‹</button>
+            <button className="carr next" onClick={(e) => { e.stopPropagation(); setK((k + 1) % shots.length) }} aria-label="Дараагийн зураг">›</button>
+          </>)}
           <em className="zh">{k + 1} / {shots.length}</em>
-        </div>
-        <div className="thumbs">
-          {shots.map((sh, n) => (
-            <button key={n} className={n === k ? 'on' : ''} onClick={() => setK(n)} aria-label={`Зураг ${n + 1}`} style={has ? undefined : bg(n)}>
-              {has && <img src={sh} alt="" />}
-            </button>
-          ))}
         </div>
       </div>
       <div className="info">
@@ -149,28 +146,31 @@ function Panel({ id, onSecret, start }) {
 
 function WorkCard({ w }) {
   const imgs = w.imgs.slice(0, 5)
+  const n = imgs.length
   const [k, setK] = useState(0)
   const [r, setR] = useState(2) // зургийн жинхэнэ харьцаа
-  const has = imgs.length > 0
-  const bg = (n) => ({ background: `linear-gradient(135deg,hsl(${w.hue + n * 35} 60% 42%),hsl(${w.hue + n * 35 + 40} 70% 20%))` })
+  const go = (d) => setK((k + d + n) % n)
+  const bg = { aspectRatio: 1.8, background: `linear-gradient(135deg,hsl(${w.hue} 60% 42%),hsl(${w.hue + 40} 70% 20%))` }
   return (
-    <article className="wcard">
-      <div className="thumb" style={has ? { aspectRatio: r } : { aspectRatio: 1.8, ...bg(k) }}>
-        {has
+    <article className="wcard wrow">
+      <div className="thumb" style={n ? { aspectRatio: r } : bg}>
+        {n
           ? <img src={imgs[k]} alt={`${w.t} — зураг ${k + 1}`} loading="lazy" onLoad={(e) => setR(Math.min(3, Math.max(0.8, e.target.naturalWidth / e.target.naturalHeight)))} />
           : <span>{w.t[0]}</span>}
+        {n > 1 && (<>
+          <button className="carr prev" onClick={() => go(-1)} aria-label="Өмнөх зураг">‹</button>
+          <button className="carr next" onClick={() => go(1)} aria-label="Дараагийн зураг">›</button>
+          <em className="count">{k + 1} / {n}</em>
+        </>)}
       </div>
-      {imgs.length > 1 && (
-        <div className="thumbs">
-          {imgs.map((im, n) => (
-            <button key={n} className={n === k ? 'on' : ''} onClick={() => setK(n)} aria-label={`Зураг ${n + 1}`}><img src={im} alt="" /></button>))}
-        </div>)}
       <div className="cbody">
         <h3>{w.t}</h3>
         <p>{w.d}</p>
         <ul className="chips">{w.tags.map((t) => <li key={t}>{t}</li>)}</ul>
-        {w.url && w.url !== '#' && (
-          <a className="wlink" href={w.url} target="_blank" rel="noreferrer">{w.url.replace(/^https?:\/\//, '')} ↗</a>)}
+        <div className="wlinks">
+          {w.url && w.url !== '#' && <a href={w.url} target="_blank" rel="noreferrer">{w.url.replace(/^https?:\/\//, '')}</a>}
+          {w.github && <a href={w.github} target="_blank" rel="noreferrer">GitHub</a>}
+        </div>
       </div>
     </article>
   )
@@ -221,6 +221,7 @@ const ZOOM = 1.35
 export default function App() {
   const [fly, setFly] = useState(fromHash)       // камер аль арал руу ойртсон бэ
   const [active, setActive] = useState(fromHash) // аль арлын мэдээлэл нээлттэй вэ
+  const [spy, setSpy] = useState(null)           // гүйлгэх үед аль хэсэг дээр байгаа
   const [meteors, setMeteors] = useState(false)
   const [start, setStart] = useState(0) // «Бүтээлийн ертөнц» аль төслөөс эхлэх
   const wref = useRef(null)
@@ -228,7 +229,7 @@ export default function App() {
   const timer = useRef(0)
   const push = (id) => history.pushState(null, '', id ? '#' + id : location.pathname + location.search)
 
-  // Арал дээр дарах ч, навигацийн холбоос ч, ‹ › сум ч энэ нэг функцийг дуудна
+  // Арал дээр дарах ч, footer-ийн холбоос ч, ‹ › сум ч энэ нэг функцийг дуудна
   const open = (id, n = 0) => {
     clearTimeout(timer.current)
     setStart(n)
@@ -240,10 +241,25 @@ export default function App() {
   }
   const close = () => { clearTimeout(timer.current); push(null); setActive(null); setFly(null) }
 
+  // Дээд цэс: арал руу биш, нүүрний доорх хэсэг рүү гүйлгэнэ
+  const go = (id) => {
+    if (active || fly) { clearTimeout(timer.current); push(null); setActive(null); setFly(null) }
+    document.body.style.overflow = '' // панель нээлттэй байсан бол гүйлгэхийг сулруулна
+    document.getElementById('sec-' + id)?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  // Зүүн дээд од: нүүр хэсэг рүү буцна
+  const home = () => {
+    close()
+    document.body.style.overflow = ''
+    scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   const k = ISLANDS.findIndex((i) => i.id === active)
   const cur = ISLANDS[k]
   const prev = ISLANDS[(k + 3) % 4], next = ISLANDS[(k + 1) % 4]
   const target = ISLANDS.find((i) => i.id === fly)
+  const hl = active || spy // цэсэнд тодруулах хэсэг
 
   useEffect(() => {
     const key = (e) => {
@@ -258,6 +274,19 @@ export default function App() {
   })
 
   useEffect(() => { document.body.style.overflow = active ? 'hidden' : '' }, [active])
+  useEffect(() => { // гүйлгэх үед цэсийн идэвхтэй товч солигдоно
+    const f = () => {
+      let c = null
+      ISLANDS.forEach((i) => {
+        const el = document.getElementById('sec-' + i.id)
+        if (el && el.getBoundingClientRect().top <= innerHeight * 0.4) c = i.id
+      })
+      setSpy(c)
+    }
+    f()
+    addEventListener('scroll', f, { passive: true })
+    return () => removeEventListener('scroll', f)
+  }, [])
   useEffect(() => { // доорх хэсгүүд гүйлгэхэд аажим гарч ирнэ
     const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && e.target.classList.add('in')), { threshold: 0.12 })
     document.querySelectorAll('.reveal').forEach((el) => io.observe(el))
@@ -278,17 +307,16 @@ export default function App() {
   // Сонгосон арлыг дэлгэцийн дээд хэсгийн голд аваачна
   const z = target?.z ?? ZOOM
   const oy = target?.oy ?? 21
-  const initials = me.name.split(' ').map((w) => w[0]).join('').slice(0, 2)
   const cam = target ? `translate(${-z * (target.cx - 50)}%, ${-oy - z * (target.ly - 50)}%) scale(${z})` : 'none'
 
   return (
     <>
       <nav className="nav">
-        <button className="brand" onClick={close} aria-label="Нүүр"><span className="logo"><Star /></span></button>
+        <button className="brand" onClick={home} aria-label="Нүүр"><span className="logo"><Star /></span></button>
         <div className="links">
           {ISLANDS.map((i) => (
-            <a key={i.id} href={`#${i.id}`} className={active === i.id ? 'on' : ''} style={{ '--c': i.c }}
-              aria-current={active === i.id ? 'page' : undefined} onClick={(e) => { e.preventDefault(); open(i.id) }}><Ico n={i.id} />{i.nav}</a>
+            <a key={i.id} href={`#sec-${i.id}`} className={hl === i.id ? 'on' : ''} style={{ '--c': i.c }}
+              aria-current={hl === i.id ? 'page' : undefined} onClick={(e) => { e.preventDefault(); go(i.id) }}><Ico n={i.id} />{i.nav}</a>
           ))}
         </div>
       </nav>
@@ -327,7 +355,7 @@ export default function App() {
               <b className="pill"><Ico n={i.id} />{i.world}</b>
             </button>
           ))}
-          
+
         </div>
 
         {cur && (
@@ -352,11 +380,11 @@ export default function App() {
           <i className="meteor" style={{ top: '55%', left: '40%', animationDelay: '3s' }} />
         </div>
 
-        <section className="band reveal" style={{ '--c': '#4aa3ff' }}>
+        <section id="sec-about" className="band reveal" style={{ '--c': '#4aa3ff' }}>
           <SecHead eyebrow="Танилцуулга" a="Миний" b="тухай" />
           <div className="cgrid">
             <div className="ccard abcard">
-              <div className="mono">{initials}</div>
+              <span className="logo"><Star /></span>
               <h4 className="k">Нэр</h4>
               <p className="big">{me.name}</p>
               <p className="fq">{me.line}</p>
@@ -375,14 +403,14 @@ export default function App() {
           </div>
         </section>
 
-        <section className="band reveal" style={{ '--c': '#7ddc8a' }}>
+        <section id="sec-works" className="band reveal" style={{ '--c': '#7ddc8a' }}>
           <SecHead eyebrow="Бүтээлүүд" a="Онцлох" b="бүтээлүүд" />
           <div className="wgrid">
             {works.map((w) => <WorkCard key={w.t} w={w} />)}
           </div>
         </section>
 
-        <section className="band reveal" style={{ '--c': '#ff6fae' }}>
+        <section id="sec-skills" className="band reveal" style={{ '--c': '#ff6fae' }}>
           <SecHead eyebrow="Ур чадвар" a="Миний" b="чадварууд" />
           <div className="sk">{skills.map((g, n) => (
             <div key={g.t}>
@@ -392,7 +420,7 @@ export default function App() {
             </div>))}</div>
         </section>
 
-        <section className="band reveal" style={{ '--c': '#ffd166' }}>
+        <section id="sec-contact" className="band reveal" style={{ '--c': '#ffd166' }}>
           <SecHead eyebrow="Холбоо барих" a="Нэг холбоо," b="олон боломж" />
           <div className="cgrid">
             {[['mail', 'Имэйл', me.email, `mailto:${me.email}`], ['works', 'GitHub', me.github.replace('https://', ''), me.github], ['in', 'LinkedIn', me.linkedin.replace('https://', ''), me.linkedin]].map(([ic, n, v, u]) => (

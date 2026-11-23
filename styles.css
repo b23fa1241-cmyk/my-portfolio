@@ -379,3 +379,31 @@ body{background:
 .abcard .big{font:700 1.6rem/1.15 Georgia,serif;margin:0}
 .abcard .fq{font:italic 1rem/1.5 Georgia,serif;opacity:.85;margin:8px 0 0}
 .abcard .edu b{font-size:1.1rem}.abcard .chips{margin-top:4px}
+
+/* ===== Бүтээл: зүүн талд зураг (сумтай), баруун талд мэдээлэл ===== */
+.wgrid{display:flex;flex-direction:column;gap:28px}
+.wrow{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:32px;align-items:center;padding:20px;border-radius:30px}
+.wrow:hover,.wrow:focus-within{transform:none}
+.wrow .thumb{position:relative;margin:0;border-radius:20px}
+.carr{position:absolute;top:50%;translate:0 -50%;width:42px;height:42px;display:grid;place-items:center;border-radius:50%;background:#0b0d2bb3;border:1px solid #ffffff55;color:#fff;font-size:1.6rem;line-height:1;cursor:pointer;transition:background .2s}
+.carr.prev{left:12px}.carr.next{right:12px}
+.carr:hover,.carr:focus-visible{background:#6d4bd1}
+.count{position:absolute;bottom:12px;left:50%;translate:-50% 0;background:#0b0d2bcc;border-radius:999px;padding:2px 14px;font:normal .8rem system-ui,sans-serif}
+.wrow .cbody{padding:8px 12px 8px 0;gap:14px}
+.wrow .cbody h3{font-size:clamp(1.5rem,2.4vw,2.2rem)}
+.wrow .cbody p{font-size:1.02rem;line-height:1.7}
+.wlinks{display:flex;flex-wrap:wrap;gap:10px;margin-top:auto;padding-top:16px;border-top:1px solid #ffffff1f}
+.wlinks:empty{display:none}
+.wlinks a{padding:10px 20px;border:1px solid color-mix(in srgb,var(--c) 60%,transparent);border-radius:999px;color:#fff;text-decoration:none;font-weight:600;overflow-wrap:anywhere}
+.wlinks a:first-child{background:linear-gradient(135deg,#7c5cff,#5a43e0);border-color:transparent}
+.wlinks a:hover{filter:brightness(1.15)}
+.abcard .logo{width:56px;height:56px;margin-bottom:12px}
+@media (max-width:800px){.wrow{grid-template-columns:1fr;gap:18px}.wrow .cbody{padding:0 4px 8px}}
+
+/* Бүтээлийн ертөнцийн цонх: сумтай зураг */
+.wv .zh{left:50%;right:auto;translate:-50% 0}
+.wv .main .carr{z-index:2}
+
+/* ===== Дээд цэс: нүүрний доорх хэсэг рүү гүйлгэх ===== */
+html{scroll-behavior:smooth}
+.band{scroll-margin-top:84px}
