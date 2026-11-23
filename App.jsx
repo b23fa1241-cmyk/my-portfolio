@@ -463,7 +463,7 @@ export default function App() {
       {meteors && (
         <div className="rain" aria-live="polite">
           {Array.from({ length: 22 }, (_, j) => <i key={j} style={{ left: `${(j * 53) % 100}%`, animationDelay: `${(j % 7) * 0.2}s` }} />)}
-          <p>Ирээдүй чинь одоо эхэлж байна 🚀</p>
+          <p>Нууцыг олж чадлаа. Хүслээ шивнээрэй</p>
         </div>
       )}
     </>

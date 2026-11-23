@@ -240,7 +240,7 @@ body{background:
 .home.day .sky{filter:hue-rotate(70deg) brightness(1.2) saturate(1.1)}
 .planet{position:absolute;top:-8%;right:-7%;width:min(30vw,460px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 30% 30%,#b497ff,#5b3bd1 45%,#241466 80%);box-shadow:inset -30px -20px 80px #0008,0 0 80px #7c4dff66}
 .moon{position:absolute;top:19%;left:6%;width:54px;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 35% 35%,#c9b6ff,#5a3fa8 60%,#2a1a6e);opacity:.8}
-.meteor{position:absolute;width:130px;height:2px;background:linear-gradient(90deg,transparent,#fff);rotate:-30deg;opacity:0;animation:shoot 7s linear infinite}
+.meteor{position:absolute;width:130px;height:2px;background:linear-gradient(90deg,transparent,#fff);rotate:-30deg;opacity:0;animation:shoot 15s linear infinite}
 @keyframes shoot{0%{opacity:0;translate:0 0}5%{opacity:.9}20%,100%{opacity:0;translate:-260px 150px}}
 .clouds{position:absolute;left:-2%;right:-2%;bottom:-4%;height:26%;background:
  radial-gradient(ellipse 14% 70% at 6% 100%,#b794ff,#7a4de0 60%,transparent 61%),radial-gradient(ellipse 12% 55% at 18% 105%,#9d7bff,#6a3fd8 60%,transparent 61%),
