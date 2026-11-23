@@ -1,3 +1,5 @@
+/* Файл давхарга-давхаргаар нэмэгдсэн тул сүүлд бичсэн дүрэм давамгайлна. Эхний хэсэг нь анхны загвар */
+/* Үндсэн өнгө, нүүр хэсгийн өндөр (--H), одтой дэвсгэр */
 :root{--ink:#e9ecff;--night:#0b0d2b;--H:max(520px,calc(100dvh - 56px))}
 *{box-sizing:border-box;margin:0}
 body{color:var(--ink);font:17px/1.6 system-ui,sans-serif;overflow:hidden;background:
@@ -7,14 +9,17 @@ body{color:var(--ink);font:17px/1.6 system-ui,sans-serif;overflow:hidden;backgro
  background-size:130px 130px,90px 90px,170px 170px,100% 100%;min-height:100vh}
 h1,h2,h3{font-family:"Palatino Linotype",Palatino,Georgia,serif;line-height:1.1}
 button{font:inherit;color:inherit}
+/* Дээд цэс (доор fixed шилэн цэс болж дарагдана) */
 .nav{position:sticky;top:0;z-index:20;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:#0b0d2bd9;backdrop-filter:blur(8px);border-bottom:1px solid #ffffff1a}
 .brand{font:700 1.1rem Georgia,serif;color:#fff;background:none;border:0;cursor:pointer}
 .nav div{display:flex;gap:4px;flex-wrap:wrap}
 .nav div a{color:var(--ink);text-decoration:none;padding:6px 14px;border-radius:999px;font-size:.9rem;transition:background .2s}
 .nav div a:hover,.nav div a:focus-visible{background:#ffffff26;outline:none}
 .nav div a.on{background:var(--c);color:#0b0d2b;font-weight:700}
+/* Нүүр хэсэг: .world нь камерын transform авч нисэлтийг transition-оор жигд харуулна */
 .home{position:relative;height:var(--H);overflow:hidden}
 .world{position:relative;height:100%;transition:transform .8s cubic-bezier(.65,0,.25,1)}
+/* Нүүрний гарчиг (голд байрлана, арал руу нисэхэд бүдгэрнэ) */
 .hero{position:absolute;left:50%;top:40%;translate:-50% -50%;width:min(38%,560px);text-align:center;transition:opacity .4s}
 .has-fly .hero,.has-fly .scrollhint{opacity:0}
 .hello{color:#ffd166;letter-spacing:.05em;font-size:.9rem}
@@ -22,6 +27,7 @@ h1{font-size:clamp(2rem,4.6vw,4.4rem);line-height:1.05;margin:0;background:linea
 @keyframes shine{to{background-position:200% center}}
 .role{letter-spacing:.14em;text-transform:uppercase;font-size:.75rem;opacity:.85;line-height:1.5}.line{font:italic 1.05rem/1.4 Georgia,serif;margin-top:8px;opacity:.95}
 .scrollhint{position:absolute;bottom:10px;left:50%;translate:-50% 0;opacity:.6;font-size:.85rem;transition:opacity .4s}
+/* Арал: --cx,--y,--s React-аас, --mx,--my хулганаас орж ирнэ (parallax). float анимаци хөвүүлнэ */
 .isl{--iw:min(24vw,calc((var(--H)*.43 - 52px)/.85));position:absolute;z-index:1;left:calc(var(--cx)*1%);top:var(--y);
  width:calc(var(--iw)*var(--s,1));margin-left:calc(var(--iw)*var(--s,1)/-2);background:none;border:0;cursor:pointer;text-align:center;
  translate:calc(var(--mx,0)*var(--p)*-2px) calc(var(--my,0)*var(--p)*-2px);
@@ -37,10 +43,12 @@ h1{font-size:clamp(2rem,4.6vw,4.4rem);line-height:1.05;margin:0;background:linea
 @keyframes wob{50%{transform:scale(1.3)}}
 .win,.tw{animation:blink 2s ease-in-out infinite}
 @keyframes blink{50%{opacity:.15}}
+/* Арлуудыг холбосон зам ба дагуу гүйх гэрэл */
 .lanes{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .lane{stroke-width:1;opacity:.25}
 .pulse{stroke-width:4;stroke-linecap:round;stroke-dasharray:6 94;animation:run 4.4s linear infinite}
 @keyframes run{from{stroke-dashoffset:6}to{stroke-dashoffset:-94}}
+/* Арлын цонх: бүдэг дэвсгэр + цонх, нээгдэхэд pop анимацтай */
 .veil{position:fixed;inset:56px 0 0;z-index:5;display:flex;justify-content:center;align-items:flex-end;padding:16px;background:linear-gradient(transparent 25%,#05061acc 70%);animation:fade .3s}
 @keyframes fade{from{opacity:0}}
 .panel{position:relative;width:min(780px,100%);background:#0b0d2bf2;border:2px solid var(--c);border-radius:28px 6px 28px 6px;box-shadow:0 0 50px color-mix(in srgb,var(--c) 45%,transparent);animation:pop .35s cubic-bezier(.2,1.4,.4,1)}
@@ -51,6 +59,7 @@ h1{font-size:clamp(2rem,4.6vw,4.4rem);line-height:1.05;margin:0;background:linea
 .x{position:absolute;right:12px;top:10px;z-index:2;width:34px;height:34px;border-radius:50%;background:#0b0d2b;border:1px solid var(--c);color:var(--c);font-size:1.3rem;line-height:1;cursor:pointer}
 .x:hover,.x:focus-visible{background:color-mix(in srgb,var(--c) 25%,#0b0d2b);outline:none}
 .panel h3{margin:14px 0 4px}.panel a{color:var(--c);font-weight:600}.panel li{margin-left:1.2em}
+/* Шошго (технологи, сонирхол) */
 .chips{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin-top:14px;padding:0}
 .chips li{margin:0;border:1px solid var(--c);color:var(--c);border-radius:999px;padding:2px 14px;font-size:.9rem}
 .paint{position:relative;height:150px;margin-top:12px;border:1px dashed var(--c);border-radius:14px;overflow:hidden;cursor:crosshair}
@@ -62,10 +71,12 @@ h1{font-size:clamp(2rem,4.6vw,4.4rem);line-height:1.05;margin:0;background:linea
 .card h3{margin:8px 0 2px}.card small{opacity:.6}
 .secret{position:absolute;right:16px;bottom:8px;background:none;border:0;color:var(--c);opacity:.15;font-size:1.1rem;cursor:pointer}
 .secret:hover{opacity:.8}
+/* Нууц од дарахад гарах солир бороо */
 .rain{position:fixed;inset:0;z-index:30;pointer-events:none;overflow:hidden}
 .rain i{position:absolute;top:-120px;width:2px;height:110px;background:linear-gradient(#fff,transparent);transform:rotate(25deg);animation:fall 1.3s linear infinite}
 @keyframes fall{to{transform:translate(-320px,115vh) rotate(25deg)}}
 .rain p{position:absolute;top:42%;width:100%;text-align:center;font:700 clamp(1.4rem,5vw,2.6rem) Georgia,serif;text-shadow:0 0 20px #ffd166;animation:pop .6s}
+/* Утас: арлууд 2 баганатай тор болж, камер унтарна */
 @media (max-width:700px){
  body{overflow:auto}
  .nav{padding:0 8px}.brand{display:none}.nav div{justify-content:center;width:100%}.nav div a{padding:6px 8px;font-size:.78rem}
@@ -75,6 +86,7 @@ h1{font-size:clamp(2rem,4.6vw,4.4rem);line-height:1.05;margin:0;background:linea
  .isl{position:relative;left:auto;top:auto;width:100%;margin:0;translate:none}
  .has-fly .isl:not(.on){opacity:1;pointer-events:auto}.isl.on b,.isl.on span{opacity:1}
  .veil{align-items:center;background:#05061ae6}.pbody{max-height:76vh;padding:50px 18px 20px}}
+/* Хөдөлгөөн багасгах тохиргоотой хэрэглэгчид анимаци унтраана */
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 .hero::before{content:"";position:absolute;inset:-35% -25%;background:radial-gradient(closest-side,#6a4bd566,transparent);z-index:-1;pointer-events:none}
@@ -100,6 +112,7 @@ h1{font-size:clamp(2rem,4.6vw,4.4rem);line-height:1.05;margin:0;background:linea
 @media (max-width:700px){.clink{grid-template-columns:36px 1fr}.clink em{grid-column:2}}
 .wk .main{cursor:pointer}.thumbs button{min-width:0}
 
+/* Бүтээлийн цонх: төсөл сонгогч, зураг + мэдээлэл */
 .panel.wide{width:min(1120px,96vw)}
 .panel.wide .pbody{max-height:74vh}
 .wsel{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:16px}
@@ -149,6 +162,7 @@ body{overflow-x:hidden;overflow-y:auto}
 .scrollhint{background:none;border:0;color:inherit;cursor:pointer;white-space:nowrap}
 .scrollhint:hover{opacity:1}
 .site{position:relative;background:linear-gradient(#0b0d2b00,#0b0d2b 160px);padding-top:24px}
+/* Нүүрний доорх хэсэг. .reveal нь гүйлгэхэд аажим гарч ирнэ */
 .band{max-width:1100px;margin:0 auto;padding:64px 24px}
 .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s,transform .7s}
 .reveal.in{opacity:1;transform:none}
@@ -232,6 +246,7 @@ body{background:
 .nav .links{display:flex;gap:4px;flex-wrap:nowrap}
 .nav .links a{display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:999px;color:#e6e0ff;font-size:.92rem;text-decoration:none;transition:background .25s,box-shadow .25s}
 .nav .links a:hover{background:#ffffff1f}
+/* Идэвхтэй цэсийн товч */
 .nav .links a.on{background:linear-gradient(135deg,#7c5cff,#4b36c9);color:#fff;font-weight:600;box-shadow:0 0 22px #7c5cff99}
 .mode{width:46px;height:38px;border-radius:999px;display:grid;place-items:center;background:#ffffff14;border:1px solid #ffffff2b;cursor:pointer}
 .mode:hover{background:#ffffff26}
@@ -240,7 +255,7 @@ body{background:
 .home.day .sky{filter:hue-rotate(70deg) brightness(1.2) saturate(1.1)}
 .planet{position:absolute;top:-8%;right:-7%;width:min(30vw,460px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 30% 30%,#b497ff,#5b3bd1 45%,#241466 80%);box-shadow:inset -30px -20px 80px #0008,0 0 80px #7c4dff66}
 .moon{position:absolute;top:19%;left:6%;width:54px;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 35% 35%,#c9b6ff,#5a3fa8 60%,#2a1a6e);opacity:.8}
-.meteor{position:absolute;width:130px;height:2px;background:linear-gradient(90deg,transparent,#fff);rotate:-30deg;opacity:0;animation:shoot 15s linear infinite}
+.meteor{position:absolute;width:130px;height:2px;background:linear-gradient(90deg,transparent,#fff);rotate:-30deg;opacity:0;animation:shoot 7s linear infinite}
 @keyframes shoot{0%{opacity:0;translate:0 0}5%{opacity:.9}20%,100%{opacity:0;translate:-260px 150px}}
 .clouds{position:absolute;left:-2%;right:-2%;bottom:-4%;height:26%;background:
  radial-gradient(ellipse 14% 70% at 6% 100%,#b794ff,#7a4de0 60%,transparent 61%),radial-gradient(ellipse 12% 55% at 18% 105%,#9d7bff,#6a3fd8 60%,transparent 61%),
@@ -333,6 +348,7 @@ body{background:
 .eyebrow{text-transform:uppercase}
 .foot{margin:0;padding:56px clamp(20px,5vw,72px) 24px;border:0;display:block;background:linear-gradient(transparent,#120d3a 45%)}
 .foot::before{display:none}
+/* Footer-ийн дөрвөн багана */
 .fgrid{max-width:1480px;margin:0 auto;display:grid;grid-template-columns:1.6fr 1fr 1fr 1.3fr;gap:32px 48px;padding-bottom:32px;border-bottom:1px solid #ffffff1f}
 .fcol{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
 .fcol h4{font:600 .78rem system-ui,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#ffd166;margin-bottom:12px}
@@ -407,3 +423,37 @@ body{background:
 /* ===== Дээд цэс: нүүрний доорх хэсэг рүү гүйлгэх ===== */
 html{scroll-behavior:smooth}
 .band{scroll-margin-top:84px}
+
+/* ===== Утасны засвар (сүүлд бичсэн тул дээрх дүрмүүдийг дарна) ===== */
+@media (max-width:700px){
+ /* Цэс: 2x2 тэгш торонд, нэг мөрөнд багтана */
+ .nav{padding:8px}
+ .nav .links{display:grid;grid-template-columns:1fr 1fr;gap:4px;width:100%}
+ .nav .links a{justify-content:center;gap:6px;padding:8px 6px;font-size:.78rem;white-space:nowrap}
+ .nav .links a .ico{width:15px;height:15px}
+ /* Нүүр хэсэг: дэлгэцийн өргөнөөс хэтрэхгүй, цэсний доороос эхэлнэ */
+ .home{padding-top:124px;overflow-x:clip}
+ .site{overflow-x:clip}
+ .world{width:100%;padding:16px 14px 28px;gap:26px 14px;align-items:start}
+ /* Гарчигтай давхцдаг сарыг нууж, гаригийг жижигрүүлнэ */
+ .moon{display:none}
+ .planet{width:90px;top:110px;right:-24px;opacity:.6}
+ .hero{padding:0 4px}
+ /* ШАЛТГААН: hero-ийн гэрэл (::before) хоёр талдаа 25%-иар хэтэрч хуудсыг өргөсгөдөг байсан */
+ .hero::before{inset:-20% 0}
+ .hero h1{font-size:clamp(1.8rem,9vw,2.4rem)}
+ .eyebrow{letter-spacing:.22em;font-size:.65rem}
+ .eyebrow i{width:28px}
+ .hero .role{letter-spacing:.16em;font-size:.7rem}
+ .hero .line{font-size:.95rem}
+ /* Арлын нэрийн шошго: icon-гүй, 2 мөрөнд багтана */
+ .isl b.pill{margin-top:8px;padding:6px 10px;font-size:.8rem;line-height:1.25;text-align:center;justify-content:center}
+ .isl .pill .ico{display:none}
+ /* Арлын цонх: өндөр болсон цэсний доор нээгдэнэ */
+ .veil{inset:108px 0 0}
+ .pbody{max-height:calc(100dvh - 150px)}
+ /* Цонхны доторх зураг, текст хүрээнээсээ хэтрэхгүй */
+ .panel{max-width:100%}
+ .wv>div,.wv .info{min-width:0}
+ .wv .main img{max-width:100%}
+}
